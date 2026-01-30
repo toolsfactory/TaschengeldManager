@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Parent"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentChildAccountsPage"
+             x:DataType="vm:ParentChildAccountsViewModel"
+             Title="Kinderkonten">
+
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}">
+        <Grid RowDefinitions="Auto,*">
+
+            <!-- Total Balance Header -->
+            <Border Style="{StaticResource Card}"
+                    Margin="16,16,16,8"
+                    Grid.Row="0">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Gesamtguthaben"
+                           Style="{StaticResource SectionTitle}"
+                           Margin="0" />
+                    <Label Text="{Binding TotalBalance, StringFormat='{0:C}'}"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Children List or Empty State -->
+            <Grid Grid.Row="1">
+
+                <!-- Empty State -->
+                <VerticalStackLayout IsVisible="{Binding ShowEmptyState}"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Spacing="16"
+                                     Padding="32">
+                    <Label Text="Noch keine Kinder"
+                           Style="{StaticResource EmptyStateLabel}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Füge dein erstes Kind hinzu, um mit der Taschengeldverwaltung zu beginnen."
+                           TextColor="{StaticResource Gray500}"
+                           HorizontalTextAlignment="Center" />
+                    <Button Text="Kind hinzufügen"
+                            Command="{Binding AddChildCommand}"
+                            Style="{StaticResource PrimaryButton}"
+                            HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- Children Collection -->
+                <CollectionView ItemsSource="{Binding Children}"
+                                IsVisible="{Binding HasChildren}"
+                                SelectionMode="Single"
+                                SelectionChangedCommand="{Binding ChildSelectedCommand}"
+                                SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                                Margin="16,8,16,16">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ChildAccountItem">
+                            <Border Style="{StaticResource Card}"
+                                    Margin="0,4"
+                                    Padding="16">
+                                <Grid ColumnDefinitions="Auto,*,Auto"
+                                      RowDefinitions="Auto,Auto"
+                                      ColumnSpacing="12"
+                                      RowSpacing="4">
+
+                                    <!-- Avatar -->
+                                    <Border Grid.RowSpan="2"
+                                            WidthRequest="48"
+                                            HeightRequest="48"
+                                            StrokeShape="RoundRectangle 24"
+                                            BackgroundColor="{StaticResource Primary}"
+                                            VerticalOptions="Center">
+                                        <Label Text="{Binding Initials}"
+                                               TextColor="White"
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center" />
+                                    </Border>
+
+                                    <!-- Name -->
+                                    <Label Grid.Column="1"
+                                           Grid.Row="0"
+                                           Text="{Binding Name}"
+                                           Style="{StaticResource CardTitle}"
+                                           VerticalOptions="End" />
+
+                                    <!-- Last Activity -->
+                                    <Label Grid.Column="1"
+                                           Grid.Row="1"
+                                           Text="{Binding LastActivityText}"
+                                           TextColor="{StaticResource Gray500}"
+                                           FontSize="12"
+                                           VerticalOptions="Start" />
+
+                                    <!-- Balance -->
+                                    <Label Grid.Column="2"
+                                           Grid.RowSpan="2"
+                                           Text="{Binding FormattedBalance}"
+                                           Style="{StaticResource BalanceLabel}"
+                                           FontSize="20"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Grid.RowSpan="2"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               Color="{StaticResource Primary}" />
+
+            <!-- Error Message -->
+            <Border IsVisible="{Binding HasError}"
+                    BackgroundColor="{StaticResource Error}"
+                    Padding="16"
+                    Margin="16"
+                    Grid.Row="1"
+                    VerticalOptions="End">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+        </Grid>
+    </RefreshView>
+
+</ContentPage>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Relative.RelativeDashboardPage"
+             Title="Geschenke">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Abmelden" Clicked="OnLogoutClicked" />
+    </ContentPage.ToolbarItems>
+
+    <RefreshView x:Name="RefreshViewControl"
+                 Refreshing="OnRefreshing">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16" Padding="16">
+
+                <!-- Welcome Header -->
+                <Label Text="Hallo!"
+                       Style="{StaticResource PageTitle}" />
+                <Label Text="Verschenke Freude an die Kinder"
+                       Style="{StaticResource Caption}"
+                       FontSize="16"
+                       Margin="0,-12,0,0" />
+
+                <!-- Send Gift Card -->
+                <Border Style="{StaticResource Card}"
+                        BackgroundColor="{StaticResource RelativeColor}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Geschenk senden"
+                               TextColor="{StaticResource White}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="18" />
+                        <Label Text="Überrasche ein Kind mit einem Geldgeschenk"
+                               TextColor="{StaticResource White}"
+                               Opacity="0.9" />
+                        <Button Text="Jetzt schenken"
+                                BackgroundColor="{StaticResource White}"
+                                TextColor="{StaticResource RelativeColor}"
+                                Clicked="OnSendGiftClicked" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Connected Families -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Verbundene Familien"
+                               Style="{StaticResource SectionTitle}"
+                               Margin="0" />
+                        <BoxView Style="{StaticResource RelativeAccent}" />
+
+                        <CollectionView x:Name="FamiliesCollection">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource TransactionCard}">
+                                        <VerticalStackLayout Spacing="4">
+                                            <Label Text="{Binding FamilyName}"
+                                                   Style="{StaticResource CardTitle}" />
+                                            <Label Text="{Binding ChildrenCount, StringFormat='{0} Kinder'}"
+                                                   Style="{StaticResource Caption}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout Spacing="8" Padding="16">
+                                    <Label Text="Noch keine Familien verbunden"
+                                           Style="{StaticResource EmptyStateLabel}"
+                                           Margin="0" />
+                                    <Label Text="Bitte eine Familie um eine Einladung"
+                                           Style="{StaticResource Caption}"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Gift History -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout>
+                            <Label Text="Deine Geschenke"
+                                   Style="{StaticResource SectionTitle}"
+                                   Margin="0"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Button Text="Alle"
+                                    Style="{StaticResource TextButton}"
+                                    Clicked="OnShowAllGiftsClicked" />
+                        </HorizontalStackLayout>
+
+                        <CollectionView x:Name="GiftsCollection"
+                                        HeightRequest="150">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource TransactionCard}">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                            <VerticalStackLayout VerticalOptions="Center">
+                                                <Label Text="{Binding RecipientName}"
+                                                       Style="{StaticResource CardTitle}" />
+                                                <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy}'}"
+                                                       Style="{StaticResource Caption}" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding Amount, StringFormat='{0:C}'}"
+                                                   Style="{StaticResource IncomeAmount}"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <Label Text="Noch keine Geschenke versendet"
+                                       Style="{StaticResource EmptyStateLabel}" />
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

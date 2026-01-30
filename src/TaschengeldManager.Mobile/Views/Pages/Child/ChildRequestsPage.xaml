@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Child"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Child.ChildRequestsPage"
+             x:DataType="vm:ChildRequestsViewModel"
+             Title="Anfragen">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- New Request Button -->
+        <Button Text="+ Neue Anfrage"
+                Margin="16"
+                Command="{Binding CreateRequestCommand}" />
+
+        <!-- Requests List -->
+        <RefreshView Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Requests}"
+                            Margin="16,0,16,16">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:MoneyRequestItem">
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding FormattedAmount}"
+                                           Style="{StaticResource CardTitle}"
+                                           FontSize="20" />
+                                    <Border Grid.Column="1"
+                                            BackgroundColor="{Binding StatusColor}"
+                                            Padding="8,4"
+                                            StrokeShape="RoundRectangle 8">
+                                        <Label Text="{Binding StatusText}"
+                                               TextColor="White"
+                                               FontSize="11" />
+                                    </Border>
+                                </Grid>
+
+                                <Label Text="{Binding Reason}"
+                                       Style="{StaticResource Caption}"
+                                       LineBreakMode="WordWrap"
+                                       MaxLines="2" />
+
+                                <Label Text="{Binding FormattedDate, StringFormat='Erstellt: {0}'}"
+                                       Style="{StaticResource Caption}" />
+
+                                <!-- Response (if any) -->
+                                <Border BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                                        StrokeThickness="0"
+                                        Padding="12"
+                                        IsVisible="{Binding HasResponse}">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="{Binding RespondedByName, StringFormat='Antwort von {0}:'}"
+                                               Style="{StaticResource Caption}"
+                                               FontFamily="OpenSansSemibold" />
+                                        <Label Text="{Binding ResponseNote}"
+                                               Style="{StaticResource Caption}" />
+                                        <Label Text="{Binding FormattedRespondedDate, StringFormat='({0})'}"
+                                               Style="{StaticResource Caption}"
+                                               FontSize="10"
+                                               TextColor="Gray" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Withdraw Button for Pending -->
+                                <Button Text="Anfrage zurueckziehen"
+                                        Style="{StaticResource OutlineButton}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChildRequestsViewModel}}, Path=WithdrawRequestCommand}"
+                                        CommandParameter="{Binding .}"
+                                        IsVisible="{Binding CanWithdraw}"
+                                        HeightRequest="36"
+                                        Margin="0,4,0,0" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="16" Padding="32" VerticalOptions="Center">
+                        <Label Text="Keine Anfragen"
+                               Style="{StaticResource EmptyStateLabel}"
+                               FontSize="18" />
+                        <Label Text="Frage deine Eltern um Geld"
+                               Style="{StaticResource Caption}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>

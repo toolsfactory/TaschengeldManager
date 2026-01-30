@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Child"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Child.ChildDashboardPage"
+             x:DataType="vm:ChildDashboardViewModel"
+             Title="Mein Taschengeld">
+
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Animated Balance Card -->
+                <Border Style="{StaticResource BalanceCard}" x:Name="BalanceCard">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Dein Guthaben"
+                               TextColor="{StaticResource White}"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.9" />
+                        <Label x:Name="BalanceLabel"
+                               Text="{Binding BalanceFormatted}"
+                               TextColor="{StaticResource White}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="42"
+                               HorizontalTextAlignment="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsBalanceAnimating}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <toolkit:AnimationAction Animation="{toolkit:PulseAnimation Duration=500}" />
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label Text="{Binding LastUpdated, StringFormat='Zuletzt aktualisiert: {0}'}"
+                               TextColor="{StaticResource White}"
+                               FontSize="11"
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.7" />
+
+                        <!-- Interest Info (if applicable) -->
+                        <Border BackgroundColor="Transparent"
+                                Stroke="{StaticResource White}"
+                                StrokeThickness="1"
+                                Padding="8,4"
+                                HorizontalOptions="Center"
+                                IsVisible="{Binding HasInterestEnabled}">
+                            <HorizontalStackLayout Spacing="4">
+                                <Label Text="📈"
+                                       FontSize="12" />
+                                <Label Text="{Binding InterestInfo}"
+                                       TextColor="{StaticResource White}"
+                                       FontSize="11" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="16" Padding="16">
+
+                    <!-- Quick Actions -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Button Text="Ausgabe erfassen"
+                                Style="{StaticResource SecondaryButton}"
+                                Command="{Binding AddExpenseCommand}" />
+                        <Button Grid.Column="1"
+                                Text="Geld anfragen"
+                                Style="{StaticResource OutlineButton}"
+                                Command="{Binding RequestMoneyCommand}" />
+                    </Grid>
+
+                    <!-- Recent Transactions -->
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="12">
+                            <HorizontalStackLayout>
+                                <Label Text="Letzte Bewegungen"
+                                       Style="{StaticResource SectionTitle}"
+                                       Margin="0"
+                                       HorizontalOptions="StartAndExpand" />
+                                <Button Text="Alle"
+                                        Style="{StaticResource TextButton}"
+                                        Command="{Binding ShowAllTransactionsCommand}" />
+                            </HorizontalStackLayout>
+
+                            <CollectionView ItemsSource="{Binding RecentTransactions}"
+                                            SelectionMode="Single"
+                                            SelectionChangedCommand="{Binding TransactionSelectedCommand}"
+                                            SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
+                                            HeightRequest="220">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:ChildTransactionItem">
+                                        <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                                            <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
+                                                <BoxView WidthRequest="4"
+                                                         CornerRadius="2"
+                                                         BackgroundColor="{Binding TypeColor}" />
+                                                <Label Grid.Column="1"
+                                                       Text="{Binding TypeIcon}"
+                                                       FontSize="16"
+                                                       VerticalOptions="Center" />
+                                                <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                                                    <Label Text="{Binding Description}"
+                                                           Style="{StaticResource CardTitle}" />
+                                                    <HorizontalStackLayout Spacing="8">
+                                                        <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy}'}"
+                                                               Style="{StaticResource Caption}" />
+                                                        <Label Text="{Binding Category}"
+                                                               Style="{StaticResource Caption}"
+                                                               TextColor="{StaticResource Primary}"
+                                                               IsVisible="{Binding HasCategory}" />
+                                                        <Label Text="Zinsen"
+                                                               Style="{StaticResource Caption}"
+                                                               TextColor="Teal"
+                                                               FontFamily="OpenSansSemibold"
+                                                               IsVisible="{Binding IsInterestTransaction}" />
+                                                    </HorizontalStackLayout>
+                                                </VerticalStackLayout>
+                                                <Label Grid.Column="3"
+                                                       Text="{Binding AmountFormatted}"
+                                                       TextColor="{Binding TypeColor}"
+                                                       FontFamily="OpenSansSemibold"
+                                                       VerticalOptions="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.EmptyView>
+                                    <VerticalStackLayout Spacing="8" Padding="16">
+                                        <Label Text="Noch keine Transaktionen"
+                                               Style="{StaticResource EmptyStateLabel}" />
+                                        <Label Text="Deine Kontobewegungen erscheinen hier"
+                                               Style="{StaticResource Caption}"
+                                               HorizontalTextAlignment="Center" />
+                                    </VerticalStackLayout>
+                                </CollectionView.EmptyView>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Pending Requests Summary -->
+                    <Border Style="{StaticResource Card}" IsVisible="{Binding HasPendingRequests}">
+                        <VerticalStackLayout Spacing="8">
+                            <HorizontalStackLayout>
+                                <Label Text="Offene Anfragen"
+                                       Style="{StaticResource SectionTitle}"
+                                       Margin="0"
+                                       HorizontalOptions="StartAndExpand" />
+                                <Border Style="{StaticResource WarningBadge}" Padding="8,4">
+                                    <Label Text="{Binding PendingRequestsCount}"
+                                           Style="{StaticResource BadgeLabel}" />
+                                </Border>
+                            </HorizontalStackLayout>
+                            <Label Text="{Binding PendingRequestsCount, StringFormat='Du hast {0} offene Anfrage(n)'}"
+                                   Style="{StaticResource Caption}" />
+                            <Button Text="Anfragen anzeigen"
+                                    Style="{StaticResource TextButton}"
+                                    Command="{Binding ShowRequestsCommand}"
+                                    HorizontalOptions="Start" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

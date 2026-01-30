@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Parent"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentInvitePage"
+             x:DataType="vm:ParentInviteViewModel"
+             Title="Verwandten einladen"
+             Shell.PresentationMode="ModalAnimated">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Info Text -->
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                   Padding="15"
+                   CornerRadius="10"
+                   BorderColor="Transparent">
+                <Label Text="Lade Verwandte ein, damit sie deinen Kindern Geldgeschenke senden koennen. Die eingeladene Person erhaelt eine E-Mail mit einem Einladungs-Link."
+                       TextColor="White"
+                       FontSize="14" />
+            </Frame>
+
+            <!-- Invite Form -->
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Neue Einladung"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <!-- Email -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="E-Mail-Adresse *"
+                               FontAttributes="Bold"
+                               FontSize="14" />
+                        <Entry Placeholder="z.B. oma@example.com"
+                               Text="{Binding Email}"
+                               Keyboard="Email"
+                               ReturnType="Next"
+                               ClearButtonVisibility="WhileEditing" />
+                        <Label Text="{Binding EmailError}"
+                               TextColor="Red"
+                               FontSize="12"
+                               IsVisible="{Binding EmailError, Converter={StaticResource StringNotEmptyConverter}}" />
+                    </VerticalStackLayout>
+
+                    <!-- Relationship Description -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Beziehung (optional)"
+                               FontAttributes="Bold"
+                               FontSize="14" />
+                        <Entry Placeholder="z.B. Oma, Onkel, Tante"
+                               Text="{Binding RelationshipDescription}"
+                               MaxLength="50"
+                               ReturnType="Done"
+                               ClearButtonVisibility="WhileEditing" />
+                        <Label Text="Hilft bei der Zuordnung in der Familienliste."
+                               TextColor="Gray"
+                               FontSize="12" />
+                    </VerticalStackLayout>
+
+                    <!-- Invite Button -->
+                    <Button Text="Einladung senden"
+                            Command="{Binding InviteCommand}"
+                            IsEnabled="{Binding CanInvite}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            HeightRequest="50" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Pending Invitations -->
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Ausstehende Einladungen"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <RefreshView Command="{Binding RefreshCommand}"
+                             IsRefreshing="{Binding IsRefreshing}">
+                    <CollectionView ItemsSource="{Binding PendingInvitations}"
+                                    EmptyView="Keine ausstehenden Einladungen.">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:InvitationItem">
+                                <Frame Padding="15" Margin="0,5" CornerRadius="10" BorderColor="LightGray">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                        <!-- Email -->
+                                        <Label Grid.Row="0" Grid.Column="0"
+                                               Text="{Binding Email}"
+                                               FontSize="16"
+                                               FontAttributes="Bold" />
+
+                                        <!-- Relationship -->
+                                        <Label Grid.Row="1" Grid.Column="0"
+                                               Text="{Binding RelationshipDescription}"
+                                               TextColor="Gray"
+                                               FontSize="14"
+                                               IsVisible="{Binding RelationshipDescription, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                                        <!-- Dates -->
+                                        <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Spacing="10">
+                                            <Label Text="{Binding FormattedCreatedAt, StringFormat='Gesendet: {0}'}"
+                                                   TextColor="Gray"
+                                                   FontSize="12" />
+                                            <Label Text="{Binding FormattedExpiresAt, StringFormat='Gueltig bis: {0}'}"
+                                                   TextColor="Gray"
+                                                   FontSize="12" />
+                                        </HorizontalStackLayout>
+
+                                        <!-- Withdraw Button -->
+                                        <Button Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
+                                                Text="X"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParentInviteViewModel}}, Path=WithdrawInvitationCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="Transparent"
+                                                TextColor="Red"
+                                                FontSize="18"
+                                                WidthRequest="40"
+                                                HeightRequest="40"
+                                                VerticalOptions="Center" />
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </RefreshView>
+            </VerticalStackLayout>
+
+            <!-- Back Button -->
+            <Button Text="Zurueck"
+                    Command="{Binding GoBackCommand}"
+                    BackgroundColor="Gray"
+                    TextColor="White"
+                    Margin="0,20,0,0" />
+
+            <!-- Loading Overlay -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Color="{StaticResource Primary}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

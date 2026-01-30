@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="TaschengeldManager.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:auth="clr-namespace:TaschengeldManager.Mobile.Views.Pages.Auth"
+    xmlns:parent="clr-namespace:TaschengeldManager.Mobile.Views.Pages.Parent"
+    xmlns:child="clr-namespace:TaschengeldManager.Mobile.Views.Pages.Child"
+    xmlns:relative="clr-namespace:TaschengeldManager.Mobile.Views.Pages.Relative"
+    xmlns:shared="clr-namespace:TaschengeldManager.Mobile.Views.Pages.Shared"
+    Title="Taschengeld"
+    FlyoutBehavior="Disabled">
+
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TabBar">
+                <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}" />
+                <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource Gray500}" />
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
+
+    <!-- Auth Section (No tabs, no flyout) -->
+    <ShellContent
+        Route="login"
+        ContentTemplate="{DataTemplate auth:LoginPage}"
+        Shell.NavBarIsVisible="False"
+        Shell.TabBarIsVisible="False" />
+
+    <!-- Parent TabBar -->
+    <TabBar Route="parent">
+        <ShellContent
+            Route="dashboard"
+            Title="Übersicht"
+            Icon="icon_home.svg"
+            ContentTemplate="{DataTemplate parent:ParentDashboardPage}" />
+        <ShellContent
+            Route="family"
+            Title="Familie"
+            Icon="icon_family.svg"
+            ContentTemplate="{DataTemplate parent:ParentFamilyPage}" />
+        <ShellContent
+            Route="payments"
+            Title="Zahlungen"
+            Icon="icon_payment.svg"
+            ContentTemplate="{DataTemplate parent:ParentPaymentsPage}" />
+        <ShellContent
+            Route="settings"
+            Title="Einstellungen"
+            Icon="icon_settings.svg"
+            ContentTemplate="{DataTemplate shared:SettingsPage}" />
+    </TabBar>
+
+    <!-- Child TabBar -->
+    <TabBar Route="child">
+        <ShellContent
+            Route="dashboard"
+            Title="Mein Geld"
+            Icon="icon_wallet.svg"
+            ContentTemplate="{DataTemplate child:ChildDashboardPage}" />
+        <ShellContent
+            Route="history"
+            Title="Verlauf"
+            Icon="icon_history.svg"
+            ContentTemplate="{DataTemplate child:ChildHistoryPage}" />
+        <ShellContent
+            Route="requests"
+            Title="Anfragen"
+            Icon="icon_request.svg"
+            ContentTemplate="{DataTemplate child:ChildRequestsPage}" />
+        <ShellContent
+            Route="settings"
+            Title="Einstellungen"
+            Icon="icon_settings.svg"
+            ContentTemplate="{DataTemplate shared:SettingsPage}" />
+    </TabBar>
+
+    <!-- Relative TabBar -->
+    <TabBar Route="relative">
+        <ShellContent
+            Route="dashboard"
+            Title="Übersicht"
+            Icon="icon_home.svg"
+            ContentTemplate="{DataTemplate relative:RelativeDashboardPage}" />
+        <ShellContent
+            Route="gifts"
+            Title="Geschenke"
+            Icon="icon_gift.svg"
+            ContentTemplate="{DataTemplate relative:RelativeGiftsPage}" />
+        <ShellContent
+            Route="settings"
+            Title="Einstellungen"
+            Icon="icon_settings.svg"
+            ContentTemplate="{DataTemplate shared:SettingsPage}" />
+    </TabBar>
+
+</Shell>

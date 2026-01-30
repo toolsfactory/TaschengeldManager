@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Parent"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentAccountDetailPage"
+             x:DataType="vm:ParentAccountDetailViewModel"
+             Title="{Binding ChildName}">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding GoBackCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}">
+        <Grid RowDefinitions="Auto,Auto,*">
+
+            <!-- Balance Card -->
+            <Border Style="{StaticResource Card}"
+                    Margin="16,16,16,8"
+                    Grid.Row="0">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Kontostand"
+                           Style="{StaticResource SectionTitle}"
+                           HorizontalOptions="Center"
+                           Margin="0" />
+                    <Label Text="{Binding Balance, StringFormat='{0:C}'}"
+                           FontSize="40"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <HorizontalStackLayout Grid.Row="1"
+                                   HorizontalOptions="Center"
+                                   Spacing="16"
+                                   Margin="16,8">
+                <Button Text="+ Einzahlung"
+                        Command="{Binding DepositCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        WidthRequest="140" />
+                <Button Text="- Ausgabe"
+                        Command="{Binding ExpenseCommand}"
+                        Style="{StaticResource SecondaryButton}"
+                        WidthRequest="140" />
+            </HorizontalStackLayout>
+
+            <!-- Transactions List -->
+            <Grid Grid.Row="2">
+
+                <!-- Empty State -->
+                <VerticalStackLayout IsVisible="{Binding HasTransactions, Converter={StaticResource InvertedBoolConverter}}"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Spacing="16"
+                                     Padding="32">
+                    <Label Text="Keine Transaktionen"
+                           Style="{StaticResource EmptyStateLabel}"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                    <Label Text="Es wurden noch keine Transaktionen erfasst."
+                           TextColor="{StaticResource Gray500}"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                </VerticalStackLayout>
+
+                <!-- Grouped Transaction List -->
+                <CollectionView ItemsSource="{Binding AccountTransactionGroups}"
+                                IsVisible="{Binding HasTransactions}"
+                                RemainingItemsThreshold="5"
+                                RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
+                                Margin="16,8,16,16">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:AccountTransactionGroup">
+                            <VerticalStackLayout Spacing="8" Margin="0,8">
+                                <!-- Date Header -->
+                                <Label Text="{Binding DateText}"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Gray600}"
+                                       FontSize="14"
+                                       Margin="4,0" />
+
+                                <!-- Transactions for this date -->
+                                <CollectionView ItemsSource="{Binding Transactions}"
+                                                SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:AccountTransactionItem">
+                                            <Border Style="{StaticResource Card}"
+                                                    Margin="0,4"
+                                                    Padding="12">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParentAccountDetailViewModel}}, Path=TransactionSelectedCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Grid ColumnDefinitions="Auto,*,Auto"
+                                                      ColumnSpacing="12">
+
+                                                    <!-- Type Icon -->
+                                                    <Label Grid.Column="0"
+                                                           Text="{Binding TypeIcon}"
+                                                           TextColor="{Binding AmountColor}"
+                                                           FontSize="18"
+                                                           VerticalOptions="Center" />
+
+                                                    <!-- Description -->
+                                                    <VerticalStackLayout Grid.Column="1"
+                                                                         VerticalOptions="Center"
+                                                                         Spacing="2">
+                                                        <Label Text="{Binding Description}"
+                                                               Style="{StaticResource CardTitle}"
+                                                               LineBreakMode="TailTruncation" />
+                                                        <Label Text="{Binding Category}"
+                                                               TextColor="{StaticResource Gray500}"
+                                                               FontSize="12"
+                                                               IsVisible="{Binding Category, Converter={StaticResource IsNotNullConverter}}" />
+                                                    </VerticalStackLayout>
+
+                                                    <!-- Amount -->
+                                                    <Label Grid.Column="2"
+                                                           Text="{Binding FormattedAmount}"
+                                                           TextColor="{Binding AmountColor}"
+                                                           FontSize="16"
+                                                           FontAttributes="Bold"
+                                                           VerticalOptions="Center" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                    <CollectionView.Footer>
+                        <ActivityIndicator IsRunning="{Binding IsLoadingMore}"
+                                           IsVisible="{Binding IsLoadingMore}"
+                                           Color="{StaticResource Primary}"
+                                           HeightRequest="40" />
+                    </CollectionView.Footer>
+                </CollectionView>
+            </Grid>
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Grid.RowSpan="3"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               Color="{StaticResource Primary}" />
+
+            <!-- Error Message -->
+            <Border IsVisible="{Binding HasError}"
+                    BackgroundColor="{StaticResource Error}"
+                    Padding="16"
+                    Margin="16"
+                    Grid.Row="2"
+                    VerticalOptions="End">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+        </Grid>
+    </RefreshView>
+
+</ContentPage>

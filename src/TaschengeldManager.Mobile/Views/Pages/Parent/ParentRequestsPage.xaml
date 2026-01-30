@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Parent"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentRequestsPage"
+             x:DataType="vm:ParentRequestsViewModel"
+             Title="Geldanfragen">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Filter Chips -->
+        <HorizontalStackLayout Spacing="8" Margin="16" HorizontalOptions="Center">
+            <Button Text="Alle"
+                    Command="{Binding FilterChangedCommand}"
+                    CommandParameter="all"
+                    Style="{StaticResource OutlineButton}"
+                    HeightRequest="32"
+                    Padding="16,0" />
+            <Button Text="Ausstehend"
+                    Command="{Binding FilterChangedCommand}"
+                    CommandParameter="Pending"
+                    Style="{StaticResource OutlineButton}"
+                    HeightRequest="32"
+                    Padding="16,0" />
+            <Button Text="Bearbeitet"
+                    Command="{Binding FilterChangedCommand}"
+                    CommandParameter="Responded"
+                    Style="{StaticResource OutlineButton}"
+                    HeightRequest="32"
+                    Padding="16,0" />
+        </HorizontalStackLayout>
+
+        <!-- Requests List -->
+        <RefreshView Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Requests}"
+                            Margin="16,0,16,16">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ParentMoneyRequestItem">
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                            <VerticalStackLayout Spacing="10">
+                                <!-- Header -->
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <!-- Child Avatar -->
+                                    <Frame WidthRequest="44" HeightRequest="44"
+                                           CornerRadius="22"
+                                           BackgroundColor="{StaticResource ChildColor}"
+                                           Padding="0"
+                                           HasShadow="False">
+                                        <Label Text="{Binding Initials}"
+                                               TextColor="{StaticResource White}"
+                                               FontFamily="OpenSansSemibold"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center" />
+                                    </Frame>
+
+                                    <!-- Name and Amount -->
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                        <Label Text="{Binding ChildName}"
+                                               Style="{StaticResource CardTitle}" />
+                                        <Label Text="{Binding FormattedAmount}"
+                                               FontSize="18"
+                                               FontFamily="OpenSansSemibold"
+                                               TextColor="{StaticResource Primary}" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="2"
+                                            BackgroundColor="{Binding StatusColor}"
+                                            Padding="8,4"
+                                            StrokeShape="RoundRectangle 8"
+                                            VerticalOptions="Start">
+                                        <Label Text="{Binding StatusText}"
+                                               TextColor="White"
+                                               FontSize="11" />
+                                    </Border>
+                                </Grid>
+
+                                <!-- Reason -->
+                                <Label Text="{Binding Reason}"
+                                       Style="{StaticResource Caption}"
+                                       LineBreakMode="WordWrap" />
+
+                                <!-- Date -->
+                                <Label Text="{Binding FormattedDate, StringFormat='Erstellt: {0}'}"
+                                       Style="{StaticResource Caption}"
+                                       FontSize="11" />
+
+                                <!-- Response (if any) -->
+                                <Border BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
+                                        StrokeThickness="0"
+                                        Padding="12"
+                                        IsVisible="{Binding HasResponse}">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="{Binding RespondedByName, StringFormat='Beantwortet von {0}:'}"
+                                               Style="{StaticResource Caption}"
+                                               FontFamily="OpenSansSemibold" />
+                                        <Label Text="{Binding ResponseNote}"
+                                               Style="{StaticResource Caption}" />
+                                        <Label Text="{Binding FormattedRespondedDate}"
+                                               Style="{StaticResource Caption}"
+                                               FontSize="10"
+                                               TextColor="Gray" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Action Buttons for Pending -->
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding IsPending}">
+                                    <Button Grid.Column="0"
+                                            Text="Ablehnen"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParentRequestsViewModel}}, Path=RejectRequestCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Red"
+                                            TextColor="White"
+                                            HeightRequest="40" />
+                                    <Button Grid.Column="1"
+                                            Text="Genehmigen"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParentRequestsViewModel}}, Path=ApproveRequestCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Green"
+                                            TextColor="White"
+                                            HeightRequest="40" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="16" Padding="32" VerticalOptions="Center">
+                        <Label Text="Keine Anfragen"
+                               Style="{StaticResource EmptyStateLabel}"
+                               FontSize="18" />
+                        <Label Text="Deine Kinder haben noch keine Geldanfragen gestellt."
+                               Style="{StaticResource Caption}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>

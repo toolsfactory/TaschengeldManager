@@ -1,0 +1,80 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+coverage*.xml
+coverage*.json
+
+# Build output
+publish/
+*.publish.xml
+
+# .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+nul
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Application specific
+appsettings.Development.json
+appsettings.Local.json
+*.db
+*.sqlite
+
+# Claude Code - local settings (not checked in)
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/todos/
+.claude/plans/
+.claude/scratchpad/
+# Keep .claude/agents/ as it's part of the project

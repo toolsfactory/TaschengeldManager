@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Parent"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentPaymentsPage"
+             x:DataType="vm:ParentPaymentsViewModel"
+             Title="Zahlungen">
+
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16" Padding="16">
+
+                <!-- Quick Actions -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Button Text="Einzahlung"
+                            Command="{Binding DepositCommand}" />
+                    <Button Grid.Column="1"
+                            Text="Auszahlung"
+                            Style="{StaticResource SecondaryButton}"
+                            Command="{Binding WithdrawCommand}" />
+                </Grid>
+
+                <!-- Recurring Payments Card -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Regelmäßige Zahlungen"
+                                   Style="{StaticResource SectionTitle}"
+                                   Margin="0"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="1"
+                                    Text="+ Neu"
+                                    Style="{StaticResource TextButton}"
+                                    Command="{Binding AddRecurringPaymentCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource ParentAccent}" />
+
+                        <CollectionView ItemsSource="{Binding RecurringPayments}"
+                                        SelectionMode="Single"
+                                        SelectionChangedCommand="{Binding PaymentSelectedCommand}"
+                                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12">
+                                            <Label Text="{Binding ChildName}"
+                                                   Style="{StaticResource CardTitle}" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding Amount, StringFormat='{0:C}'}"
+                                                   Style="{StaticResource IncomeAmount}"
+                                                   FontSize="16" />
+                                            <Label Grid.Row="1"
+                                                   Text="{Binding ScheduleDescription}"
+                                                   Style="{StaticResource Caption}" />
+                                            <Label Grid.Row="1" Grid.Column="1"
+                                                   Text="{Binding NextPaymentDate, StringFormat='Nächste: {0:dd.MM.}'}"
+                                                   Style="{StaticResource Caption}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout Spacing="8" Padding="16">
+                                    <Label Text="Keine regelmäßigen Zahlungen"
+                                           Style="{StaticResource EmptyStateLabel}" />
+                                    <Label Text="Richte automatisches Taschengeld ein"
+                                           Style="{StaticResource Caption}"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Pending Requests Card -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Offene Anfragen"
+                                   Style="{StaticResource SectionTitle}"
+                                   Margin="0"
+                                   VerticalOptions="Center" />
+                            <Border Style="{StaticResource WarningBadge}"
+                                    IsVisible="{Binding HasPendingRequests}">
+                                <Label Text="{Binding PendingRequestsCount}"
+                                       Style="{StaticResource BadgeLabel}" />
+                            </Border>
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding PendingRequests}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                                        <VerticalStackLayout Spacing="8">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <Label Text="{Binding ChildName}"
+                                                       Style="{StaticResource CardTitle}" />
+                                                <Label Grid.Column="1"
+                                                       Text="{Binding Amount, StringFormat='{0:C}'}"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{StaticResource Warning}" />
+                                            </Grid>
+                                            <Label Text="{Binding Reason}"
+                                                   Style="{StaticResource Caption}"
+                                                   LineBreakMode="TailTruncation" />
+                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                <Button Text="Ablehnen"
+                                                        Style="{StaticResource OutlineButton}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParentPaymentsViewModel}}, Path=RejectRequestCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        HeightRequest="36" />
+                                                <Button Grid.Column="1"
+                                                        Text="Genehmigen"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParentPaymentsViewModel}}, Path=ApproveRequestCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        HeightRequest="36" />
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <Label Text="Keine offenen Anfragen"
+                                       Style="{StaticResource EmptyStateLabel}" />
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Recent Transactions -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Letzte Transaktionen"
+                               Style="{StaticResource SectionTitle}"
+                               Margin="0" />
+
+                        <CollectionView ItemsSource="{Binding RecentTransactions}"
+                                        HeightRequest="200">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                            <BoxView WidthRequest="4"
+                                                     CornerRadius="2"
+                                                     BackgroundColor="{Binding AmountColor}" />
+                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                                <Label Text="{Binding Description}"
+                                                       Style="{StaticResource CardTitle}" />
+                                                <Label Style="{StaticResource Caption}">
+                                                    <Label.Text>
+                                                        <MultiBinding StringFormat="{}{0} - {1:dd.MM.yyyy}">
+                                                            <Binding Path="ChildName" />
+                                                            <Binding Path="Date" />
+                                                        </MultiBinding>
+                                                    </Label.Text>
+                                                </Label>
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="2"
+                                                   Text="{Binding AmountFormatted}"
+                                                   TextColor="{Binding AmountColor}"
+                                                   FontFamily="OpenSansSemibold"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <Label Text="Keine Transaktionen"
+                                       Style="{StaticResource EmptyStateLabel}" />
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

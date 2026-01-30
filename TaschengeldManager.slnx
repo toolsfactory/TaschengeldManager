@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TaschengeldManager.Api/TaschengeldManager.Api.csproj" />
+    <Project Path="src/TaschengeldManager.AppHost/TaschengeldManager.AppHost.csproj" />
+    <Project Path="src/TaschengeldManager.Core/TaschengeldManager.Core.csproj" />
+    <Project Path="src/TaschengeldManager.Infrastructure/TaschengeldManager.Infrastructure.csproj" />
+    <Project Path="src/TaschengeldManager.ServiceDefaults/TaschengeldManager.ServiceDefaults.csproj" />
+    <Project Path="src/TaschengeldManager.React/TaschengeldManager.React.esproj" />
+    <Project Path="src/TaschengeldManager.Mobile/TaschengeldManager.Mobile.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TaschengeldManager.Api.Tests/TaschengeldManager.Api.Tests.csproj" />
+    <Project Path="tests/TaschengeldManager.Core.Tests/TaschengeldManager.Core.Tests.csproj" />
+    <Project Path="tests/TaschengeldManager.E2E.Tests/TaschengeldManager.E2E.Tests.csproj" />
+    <Project Path="tests/TaschengeldManager.Infrastructure.Tests/TaschengeldManager.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

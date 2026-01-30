@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext (HTTP) traffic only to specific development hosts -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Android Emulator alias to host machine -->
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <!-- Local development -->
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+</network-security-config>

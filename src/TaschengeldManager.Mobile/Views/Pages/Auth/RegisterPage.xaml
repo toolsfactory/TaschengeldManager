@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Auth"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Auth.RegisterPage"
+             x:DataType="vm:RegisterViewModel"
+             Title="Registrieren">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="24">
+
+            <Label Text="Neues Konto erstellen"
+                   Style="{StaticResource PageTitle}" />
+
+            <!-- Error Message -->
+            <Border Style="{StaticResource ErrorBadge}"
+                    IsVisible="{Binding HasError}"
+                    Padding="16,12">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="{StaticResource White}"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Anzeigename" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="z.B. Max Mustermann"
+                               Text="{Binding Nickname}"
+                               ReturnType="Next"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="E-Mail" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="name@beispiel.de"
+                               Keyboard="Email"
+                               Text="{Binding Email}"
+                               ReturnType="Next"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Passwort" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="Mindestens 8 Zeichen"
+                               IsPassword="True"
+                               Text="{Binding Password}"
+                               ReturnType="Next"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Passwort bestätigen" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="Passwort wiederholen"
+                               IsPassword="True"
+                               Text="{Binding ConfirmPassword}"
+                               ReturnType="Done"
+                               ReturnCommand="{Binding RegisterCommand}"
+                               IsEnabled="{Binding IsNotBusy}" />
+                        <Label Text="{Binding PasswordError}"
+                               Style="{StaticResource ErrorLabel}"
+                               IsVisible="{Binding PasswordError, Converter={StaticResource IsNotNullConverter}}" />
+                    </VerticalStackLayout>
+
+                    <Button Text="Registrieren"
+                            Command="{Binding RegisterCommand}"
+                            Margin="0,8,0,0">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsBusy}" Value="True">
+                                <Setter Property="Text" Value="Wird registriert..." />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Bereits ein Konto? Anmelden"
+                    Style="{StaticResource TextButton}"
+                    Command="{Binding NavigateToLoginCommand}"
+                    IsEnabled="{Binding IsNotBusy}" />
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

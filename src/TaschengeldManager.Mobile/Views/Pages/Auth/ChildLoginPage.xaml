@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Auth"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Auth.ChildLoginPage"
+             x:DataType="vm:ChildLoginViewModel"
+             Title="Kind-Anmeldung"
+             Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="24" VerticalOptions="Center">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="8" Margin="0,0,0,24">
+                <Label Text="Hallo!"
+                       Style="{StaticResource PageTitle}"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource ChildColor}" />
+                <Label Text="Melde dich an"
+                       FontSize="18"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Gray600}" />
+            </VerticalStackLayout>
+
+            <!-- Error Message -->
+            <Border Style="{StaticResource ErrorBadge}"
+                    IsVisible="{Binding HasError}"
+                    Padding="16,12">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="{StaticResource White}"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+
+            <!-- Login Form -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Familien-Code" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="ABC123"
+                               Keyboard="Text"
+                               MaxLength="10"
+                               Text="{Binding FamilyCode}"
+                               ReturnType="Next"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Dein Name" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="z.B. Max"
+                               Text="{Binding Nickname}"
+                               ReturnType="Next"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Deine PIN" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="****"
+                               IsPassword="True"
+                               Keyboard="Numeric"
+                               MaxLength="6"
+                               Text="{Binding Pin}"
+                               ReturnType="Done"
+                               ReturnCommand="{Binding LoginCommand}"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <Button Text="Anmelden"
+                            BackgroundColor="{StaticResource ChildColor}"
+                            Command="{Binding LoginCommand}"
+                            Margin="0,8,0,0">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsBusy}" Value="True">
+                                <Setter Property="Text" Value="Wird angemeldet..." />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Back to parent login -->
+            <Button Text="Eltern-Anmeldung"
+                    Style="{StaticResource TextButton}"
+                    Command="{Binding NavigateToParentLoginCommand}"
+                    IsEnabled="{Binding IsNotBusy}" />
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

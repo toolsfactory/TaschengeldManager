@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Auth"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Auth.MfaVerifyPage"
+             x:DataType="vm:MfaVerifyViewModel"
+             Title="Zwei-Faktor-Authentifizierung"
+             Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="24" VerticalOptions="Center">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="8" Margin="0,0,0,24">
+                <Label Text="Bestätigung"
+                       Style="{StaticResource PageTitle}"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Primary}" />
+                <Label Text="Gib den Code aus deiner Authenticator-App ein"
+                       FontSize="16"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Gray600}" />
+            </VerticalStackLayout>
+
+            <!-- Error Message -->
+            <Border Style="{StaticResource ErrorBadge}"
+                    IsVisible="{Binding HasError}"
+                    Padding="16,12">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="{StaticResource White}"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+
+            <!-- Code Entry -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="6-stelliger Code" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="000000"
+                               Keyboard="Numeric"
+                               MaxLength="6"
+                               Text="{Binding Code}"
+                               FontSize="28"
+                               HorizontalTextAlignment="Center"
+                               ReturnType="Done"
+                               ReturnCommand="{Binding VerifyCommand}"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <Button Text="Bestätigen"
+                            Command="{Binding VerifyCommand}"
+                            Margin="0,8,0,0">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsBusy}" Value="True">
+                                <Setter Property="Text" Value="Wird überprüft..." />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Cancel -->
+            <Button Text="Abbrechen"
+                    Style="{StaticResource TextButton}"
+                    Command="{Binding CancelCommand}"
+                    IsEnabled="{Binding IsNotBusy}" />
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

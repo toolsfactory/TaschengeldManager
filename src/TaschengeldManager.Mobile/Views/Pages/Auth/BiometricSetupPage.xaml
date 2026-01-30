@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Auth"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Auth.BiometricSetupPage"
+             x:DataType="vm:BiometricSetupViewModel"
+             Title="Biometrische Anmeldung"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Behaviors>
+        <EventToCommandBehavior EventName="Appearing" Command="{Binding CheckAvailabilityCommand}" />
+    </ContentPage.Behaviors>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="24" Padding="24" VerticalOptions="Center">
+
+            <!-- Icon -->
+            <Image Source="fingerprint.png"
+                   HeightRequest="100"
+                   WidthRequest="100"
+                   HorizontalOptions="Center"
+                   Aspect="AspectFit">
+                <Image.Behaviors>
+                    <EventToCommandBehavior EventName="Loaded" />
+                </Image.Behaviors>
+            </Image>
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Schneller anmelden"
+                       Style="{StaticResource PageTitle}"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Primary}" />
+                <Label Text="Aktiviere die biometrische Anmeldung für schnelleren Zugriff auf dein Konto."
+                       FontSize="16"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Gray600}" />
+            </VerticalStackLayout>
+
+            <!-- Status Message -->
+            <Border Style="{StaticResource Card}"
+                    Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <Label Text="{Binding BiometricStatusMessage}"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+            </Border>
+
+            <!-- Error Message -->
+            <Border Style="{StaticResource ErrorBadge}"
+                    IsVisible="{Binding HasError}"
+                    Padding="16,12">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="{StaticResource White}"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+
+            <!-- Setup Options -->
+            <VerticalStackLayout Spacing="16"
+                                 IsVisible="{Binding ShowSetupOptions}">
+
+                <Button Text="Fingerabdruck aktivieren"
+                        Command="{Binding EnableBiometricCommand}"
+                        IsEnabled="{Binding IsNotBusy}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding IsBusy}" Value="True">
+                            <Setter Property="Text" Value="Wird aktiviert..." />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Später einrichten"
+                        Style="{StaticResource TextButton}"
+                        Command="{Binding SkipCommand}"
+                        IsEnabled="{Binding IsNotBusy}" />
+            </VerticalStackLayout>
+
+            <!-- Not Available - Continue Button -->
+            <Button Text="Weiter"
+                    Command="{Binding SkipCommand}"
+                    IsVisible="{Binding ShowSetupOptions, Converter={StaticResource InvertedBoolConverter}}"
+                    IsEnabled="{Binding IsNotBusy}" />
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

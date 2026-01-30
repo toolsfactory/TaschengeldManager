@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Shared"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Shared.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="Einstellungen">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="16">
+
+            <!-- Profile Section -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Profil" Style="{StaticResource SectionTitle}" Margin="0" />
+
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                        <Frame WidthRequest="64" HeightRequest="64"
+                               CornerRadius="32"
+                               BackgroundColor="{Binding RoleColor}"
+                               Padding="0"
+                               HasShadow="False">
+                            <Label Text="{Binding UserInitials}"
+                                   TextColor="{StaticResource White}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="24"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Frame>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                            <Label Text="{Binding UserName}"
+                                   Style="{StaticResource CardTitle}"
+                                   FontSize="18" />
+                            <Label Text="{Binding UserEmail}"
+                                   Style="{StaticResource Caption}" />
+                            <Label Text="{Binding RoleDisplayName}"
+                                   Style="{StaticResource Caption}"
+                                   TextColor="{Binding RoleColor}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Security Section -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Sicherheit" Style="{StaticResource SectionTitle}" Margin="0" />
+
+                    <!-- Biometric Toggle -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Biometrische Anmeldung"
+                                   Style="{StaticResource CardTitle}" />
+                            <Label Text="Mit Fingerabdruck anmelden"
+                                   Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding IsBiometricEnabled}"
+                                IsEnabled="{Binding CanToggleBiometric}"
+                                Toggled="OnBiometricToggled" />
+                    </Grid>
+
+                    <BoxView Style="{StaticResource Divider}" />
+
+                    <!-- Change Password -->
+                    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsParentOrRelative}">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Passwort ändern"
+                                   Style="{StaticResource CardTitle}" />
+                            <Label Text="Aktualisiere dein Passwort"
+                                   Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="Ändern"
+                                Style="{StaticResource TextButton}"
+                                Command="{Binding ChangePasswordCommand}" />
+                    </Grid>
+
+                    <!-- Change PIN (Child only) -->
+                    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsChild}">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="PIN ändern"
+                                   Style="{StaticResource CardTitle}" />
+                            <Label Text="Ändere deinen Login-PIN"
+                                   Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="Ändern"
+                                Style="{StaticResource TextButton}"
+                                Command="{Binding ChangePinCommand}" />
+                    </Grid>
+
+                    <BoxView Style="{StaticResource Divider}" />
+
+                    <!-- Active Sessions -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Aktive Sitzungen"
+                                   Style="{StaticResource CardTitle}" />
+                            <Label Text="{Binding ActiveSessionsCount, StringFormat='{0} Geräte angemeldet'}"
+                                   Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="Verwalten"
+                                Style="{StaticResource TextButton}"
+                                Command="{Binding ManageSessionsCommand}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Appearance Section -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Darstellung" Style="{StaticResource SectionTitle}" Margin="0" />
+
+                    <!-- Dark Mode Toggle -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="Dunkles Design"
+                                   Style="{StaticResource CardTitle}" />
+                            <Label Text="Systemeinstellung verwenden"
+                                   Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding IsDarkModeEnabled}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- About Section -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Über" Style="{StaticResource SectionTitle}" Margin="0" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Version"
+                               Style="{StaticResource CardTitle}"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding AppVersion}"
+                               Style="{StaticResource Caption}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <BoxView Style="{StaticResource Divider}" />
+
+                    <Button Text="Datenschutz"
+                            Style="{StaticResource TextButton}"
+                            Command="{Binding OpenPrivacyCommand}"
+                            HorizontalOptions="Start" />
+
+                    <Button Text="Nutzungsbedingungen"
+                            Style="{StaticResource TextButton}"
+                            Command="{Binding OpenTermsCommand}"
+                            HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Logout Button -->
+            <Button Text="Abmelden"
+                    Style="{StaticResource OutlineButton}"
+                    TextColor="{StaticResource Error}"
+                    BorderColor="{StaticResource Error}"
+                    Command="{Binding LogoutCommand}"
+                    Margin="0,16,0,0" />
+
+            <!-- App Info -->
+            <Label Text="Taschengeld Manager"
+                   Style="{StaticResource Caption}"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,16,0,0" />
+            <Label Text="Made with love for families"
+                   Style="{StaticResource Caption}"
+                   HorizontalTextAlignment="Center"
+                   FontSize="11"
+                   Opacity="0.7" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

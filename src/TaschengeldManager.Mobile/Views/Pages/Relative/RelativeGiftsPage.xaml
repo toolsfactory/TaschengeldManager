@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Relative"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Relative.RelativeGiftsPage"
+             x:DataType="vm:RelativeGiftsViewModel"
+             Title="Meine Geschenke">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Summary Card -->
+        <Border Style="{StaticResource Card}" Margin="16" BackgroundColor="{StaticResource RelativeColor}">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Gesamte Geschenke"
+                       TextColor="{StaticResource White}"
+                       FontSize="14"
+                       Opacity="0.9" />
+                <Label Text="{Binding TotalGiftsAmount, StringFormat='{0:C}'}"
+                       TextColor="{StaticResource White}"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="28" />
+                <Label Text="{Binding GiftsCount, StringFormat='{0} Geschenke versendet'}"
+                       TextColor="{StaticResource White}"
+                       FontSize="12"
+                       Opacity="0.8" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Gifts List -->
+        <RefreshView Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Gifts}"
+                            Margin="16,0,16,16">
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding Key}"
+                               Style="{StaticResource Caption}"
+                               FontFamily="OpenSansSemibold"
+                               Margin="0,16,0,8" />
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Frame WidthRequest="44" HeightRequest="44"
+                                       CornerRadius="22"
+                                       BackgroundColor="{StaticResource ChildColor}"
+                                       Padding="0"
+                                       HasShadow="False">
+                                    <Label Text="{Binding RecipientInitials}"
+                                           TextColor="{StaticResource White}"
+                                           FontFamily="OpenSansSemibold"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Frame>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding RecipientName}"
+                                           Style="{StaticResource CardTitle}" />
+                                    <Label Style="{StaticResource Caption}">
+                                        <Label.Text>
+                                            <MultiBinding StringFormat="{}{0:dd.MM.yyyy} - {1}">
+                                                <Binding Path="Date" />
+                                                <Binding Path="FamilyName" />
+                                            </MultiBinding>
+                                        </Label.Text>
+                                    </Label>
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2"
+                                       Text="{Binding Amount, StringFormat='{0:C}'}"
+                                       Style="{StaticResource IncomeAmount}"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="16" Padding="32" VerticalOptions="Center">
+                        <Label Text="Noch keine Geschenke"
+                               Style="{StaticResource EmptyStateLabel}"
+                               FontSize="18" />
+                        <Label Text="Verschenke Freude an die Kinder"
+                               Style="{StaticResource Caption}"
+                               HorizontalTextAlignment="Center" />
+                        <Button Text="Jetzt schenken"
+                                Command="{Binding SendGiftCommand}"
+                                HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>

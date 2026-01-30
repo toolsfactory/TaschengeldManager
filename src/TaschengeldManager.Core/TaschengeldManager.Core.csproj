@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- StronglyTypedId.Templates entfernt - EF Core Converter sind manuell in Infrastructure/Data/ApplicationDbContext.cs -->
+    <PackageReference Include="StronglyTypedId" Version="1.0.0-beta08" />
+    <PackageReference Include="Toolsfactory.Common.Result" Version="1.0.7" />
+  </ItemGroup>
+
+</Project>

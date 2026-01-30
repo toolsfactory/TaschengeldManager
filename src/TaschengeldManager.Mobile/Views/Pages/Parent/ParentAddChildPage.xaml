@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Parent"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentAddChildPage"
+             x:DataType="vm:ParentAddChildViewModel"
+             Title="Kind hinzufuegen"
+             Shell.PresentationMode="ModalAnimated">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Info Text -->
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                   Padding="15"
+                   CornerRadius="10"
+                   BorderColor="Transparent">
+                <Label Text="Erstelle ein Konto fuer dein Kind. Mit dem Spitznamen und der PIN kann sich dein Kind in der App anmelden."
+                       TextColor="White"
+                       FontSize="14" />
+            </Frame>
+
+            <!-- Nickname -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Spitzname *"
+                       FontAttributes="Bold"
+                       FontSize="14" />
+                <Entry Placeholder="z.B. Max oder Maxi"
+                       Text="{Binding Nickname}"
+                       MaxLength="50"
+                       ReturnType="Next"
+                       ClearButtonVisibility="WhileEditing" />
+                <Label Text="{Binding NicknameError}"
+                       TextColor="Red"
+                       FontSize="12"
+                       IsVisible="{Binding NicknameError, Converter={StaticResource StringNotEmptyConverter}}" />
+            </VerticalStackLayout>
+
+            <!-- PIN -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="PIN (4 Ziffern) *"
+                       FontAttributes="Bold"
+                       FontSize="14" />
+                <Entry Placeholder="z.B. 1234"
+                       Text="{Binding Pin}"
+                       Keyboard="Numeric"
+                       MaxLength="4"
+                       IsPassword="True"
+                       ReturnType="Next" />
+                <Label Text="{Binding PinError}"
+                       TextColor="Red"
+                       FontSize="12"
+                       IsVisible="{Binding PinError, Converter={StaticResource StringNotEmptyConverter}}" />
+            </VerticalStackLayout>
+
+            <!-- PIN Confirmation -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="PIN bestaetigen *"
+                       FontAttributes="Bold"
+                       FontSize="14" />
+                <Entry Placeholder="PIN wiederholen"
+                       Text="{Binding PinConfirmation}"
+                       Keyboard="Numeric"
+                       MaxLength="4"
+                       IsPassword="True"
+                       ReturnType="Next" />
+                <Label Text="{Binding PinConfirmationError}"
+                       TextColor="Red"
+                       FontSize="12"
+                       IsVisible="{Binding PinConfirmationError, Converter={StaticResource StringNotEmptyConverter}}" />
+            </VerticalStackLayout>
+
+            <!-- Initial Balance -->
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Startguthaben (optional)"
+                       FontAttributes="Bold"
+                       FontSize="14" />
+                <HorizontalStackLayout Spacing="10">
+                    <Entry Placeholder="0,00"
+                           Text="{Binding InitialBalance}"
+                           Keyboard="Numeric"
+                           HorizontalOptions="FillAndExpand"
+                           WidthRequest="150" />
+                    <Label Text="EUR"
+                           VerticalOptions="Center"
+                           FontSize="16" />
+                </HorizontalStackLayout>
+                <Label Text="Mit diesem Betrag startet das Konto deines Kindes."
+                       TextColor="Gray"
+                       FontSize="12" />
+            </VerticalStackLayout>
+
+            <!-- Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,20,0,0">
+                <Button Grid.Column="0"
+                        Text="Abbrechen"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="Gray"
+                        TextColor="White" />
+                <Button Grid.Column="1"
+                        Text="Speichern"
+                        Command="{Binding SaveCommand}"
+                        IsEnabled="{Binding CanSave}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White" />
+            </Grid>
+
+            <!-- Loading Overlay -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Color="{StaticResource Primary}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

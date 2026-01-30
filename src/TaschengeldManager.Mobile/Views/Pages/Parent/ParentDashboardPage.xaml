@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentDashboardPage"
+             Title="Übersicht">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Abmelden" Clicked="OnLogoutClicked" />
+    </ContentPage.ToolbarItems>
+
+    <RefreshView x:Name="RefreshViewControl"
+                 Refreshing="OnRefreshing">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16" Padding="16">
+
+                <!-- Welcome Header -->
+                <Label Text="Willkommen zurück!"
+                       Style="{StaticResource PageTitle}" />
+
+                <!-- Family Overview Card -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Familie" Style="{StaticResource SectionTitle}" Margin="0" />
+                        <BoxView Style="{StaticResource ParentAccent}" />
+
+                        <Label Text="Keine Familie erstellt"
+                               Style="{StaticResource EmptyStateLabel}"
+                               x:Name="NoFamilyLabel" />
+
+                        <Button Text="Familie erstellen"
+                                Clicked="OnCreateFamilyClicked"
+                                x:Name="CreateFamilyButton" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Children Accounts -->
+                <Border Style="{StaticResource Card}" x:Name="ChildrenCard" IsVisible="False">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout>
+                            <Label Text="Kinderkonten"
+                                   Style="{StaticResource SectionTitle}"
+                                   Margin="0"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Button Text="+"
+                                    Style="{StaticResource TextButton}"
+                                    Clicked="OnAddChildClicked" />
+                        </HorizontalStackLayout>
+
+                        <CollectionView x:Name="ChildrenCollection"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnChildSelected">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource TransactionCard}">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Text="{Binding Name}"
+                                                   Style="{StaticResource CardTitle}"
+                                                   VerticalOptions="Center" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding Balance, StringFormat='{0:C}'}"
+                                                   Style="{StaticResource BalanceLabel}"
+                                                   FontSize="18"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <Label Text="Noch keine Kinder hinzugefügt"
+                                       Style="{StaticResource EmptyStateLabel}" />
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Pending Requests -->
+                <Border Style="{StaticResource Card}" x:Name="RequestsCard" IsVisible="False">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout>
+                            <Label Text="Offene Anfragen"
+                                   Style="{StaticResource SectionTitle}"
+                                   Margin="0"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Border Style="{StaticResource WarningBadge}" x:Name="RequestsBadge">
+                                <Label Text="0" Style="{StaticResource BadgeLabel}" x:Name="RequestsCount" />
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <Label Text="Keine offenen Anfragen"
+                               Style="{StaticResource EmptyStateLabel}"
+                               x:Name="NoRequestsLabel" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

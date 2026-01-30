@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Parent"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Parent.ParentFamilyPage"
+             x:DataType="vm:ParentFamilyViewModel"
+             Title="Familie">
+
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16" Padding="16">
+
+                <!-- Family Info Card -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Deine Familie" Style="{StaticResource SectionTitle}" Margin="0" />
+                        <BoxView Style="{StaticResource ParentAccent}" />
+
+                        <!-- No Family State -->
+                        <VerticalStackLayout Spacing="12"
+                                             IsVisible="{Binding HasNoFamily}">
+                            <Label Text="Du hast noch keine Familie erstellt."
+                                   Style="{StaticResource EmptyStateLabel}" />
+                            <Button Text="Familie erstellen"
+                                    Command="{Binding CreateFamilyCommand}" />
+                        </VerticalStackLayout>
+
+                        <!-- Family Details -->
+                        <VerticalStackLayout Spacing="8"
+                                             IsVisible="{Binding HasFamily}">
+                            <Label Text="{Binding FamilyName}"
+                                   Style="{StaticResource CardTitle}"
+                                   FontSize="20" />
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="Familien-Code:"
+                                       Style="{StaticResource Caption}" />
+                                <Label Text="{Binding FamilyCode}"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource Primary}" />
+                                <Button Text="Kopieren"
+                                        Style="{StaticResource TextButton}"
+                                        Command="{Binding CopyFamilyCodeCommand}"
+                                        Padding="8,0" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Children Section -->
+                <Border Style="{StaticResource Card}"
+                        IsVisible="{Binding HasFamily}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Kinder"
+                                   Style="{StaticResource SectionTitle}"
+                                   Margin="0"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="1"
+                                    Text="+ Kind hinzufügen"
+                                    Style="{StaticResource TextButton}"
+                                    Command="{Binding AddChildCommand}" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding Children}"
+                                        SelectionMode="Single"
+                                        SelectionChangedCommand="{Binding ChildSelectedCommand}"
+                                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="vm:FamilyMemberItem">
+                                    <SwipeView>
+                                        <SwipeView.RightItems>
+                                            <SwipeItems>
+                                                <SwipeItem Text="Entfernen"
+                                                           BackgroundColor="Red"
+                                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParentFamilyViewModel}}, Path=RemoveChildCommand}"
+                                                           CommandParameter="{Binding .}" />
+                                            </SwipeItems>
+                                        </SwipeView.RightItems>
+                                        <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                <Frame WidthRequest="44" HeightRequest="44"
+                                                       CornerRadius="22"
+                                                       BackgroundColor="{StaticResource ChildColor}"
+                                                       Padding="0"
+                                                       HasShadow="False">
+                                                    <Label Text="{Binding Initials}"
+                                                           TextColor="{StaticResource White}"
+                                                           FontFamily="OpenSansSemibold"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center" />
+                                                </Frame>
+                                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                                    <Label Text="{Binding Nickname}"
+                                                           Style="{StaticResource CardTitle}" />
+                                                    <Label Text="{Binding Balance, StringFormat='Guthaben: {0:C}'}"
+                                                           Style="{StaticResource Caption}" />
+                                                </VerticalStackLayout>
+                                                <Label Grid.Column="2"
+                                                       Text=">"
+                                                       FontSize="18"
+                                                       TextColor="{StaticResource Gray400}"
+                                                       VerticalOptions="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </SwipeView>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <Label Text="Noch keine Kinder hinzugefuegt"
+                                       Style="{StaticResource EmptyStateLabel}" />
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Relatives Section -->
+                <Border Style="{StaticResource Card}"
+                        IsVisible="{Binding HasFamily}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Verwandte"
+                                   Style="{StaticResource SectionTitle}"
+                                   Margin="0"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="1"
+                                    Text="+ Einladen"
+                                    Style="{StaticResource TextButton}"
+                                    Command="{Binding InviteRelativeCommand}" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding Relatives}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                            <Frame WidthRequest="44" HeightRequest="44"
+                                                   CornerRadius="22"
+                                                   BackgroundColor="{StaticResource RelativeColor}"
+                                                   Padding="0"
+                                                   HasShadow="False">
+                                                <Label Text="{Binding Initials}"
+                                                       TextColor="{StaticResource White}"
+                                                       FontFamily="OpenSansSemibold"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center" />
+                                            </Frame>
+                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                                <Label Text="{Binding Nickname}"
+                                                       Style="{StaticResource CardTitle}" />
+                                                <Label Text="{Binding Email}"
+                                                       Style="{StaticResource Caption}" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <Label Text="Noch keine Verwandten eingeladen"
+                                       Style="{StaticResource EmptyStateLabel}" />
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

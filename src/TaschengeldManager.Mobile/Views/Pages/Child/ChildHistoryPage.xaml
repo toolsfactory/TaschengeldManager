@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Child"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Child.ChildHistoryPage"
+             x:DataType="vm:ChildHistoryViewModel"
+             Title="Verlauf">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- Search Bar -->
+        <Border Style="{StaticResource Card}" Margin="16,16,16,0" Padding="12">
+            <SearchBar Placeholder="Suchen..."
+                       Text="{Binding SearchText}"
+                       SearchCommand="{Binding SearchCommand}"
+                       BackgroundColor="Transparent" />
+        </Border>
+
+        <!-- Filter Bar -->
+        <Border Grid.Row="1" Style="{StaticResource Card}" Margin="16,8,16,0" Padding="12">
+            <VerticalStackLayout Spacing="8">
+                <!-- Type Filter -->
+                <HorizontalStackLayout Spacing="8">
+                    <Button Text="Alle"
+                            Style="{Binding AllFilterStyle}"
+                            Command="{Binding SetFilterCommand}"
+                            CommandParameter="all"
+                            HeightRequest="32"
+                            Padding="12,0" />
+                    <Button Text="Einnahmen"
+                            Style="{Binding IncomeFilterStyle}"
+                            Command="{Binding SetFilterCommand}"
+                            CommandParameter="income"
+                            HeightRequest="32"
+                            Padding="12,0" />
+                    <Button Text="Ausgaben"
+                            Style="{Binding ExpenseFilterStyle}"
+                            Command="{Binding SetFilterCommand}"
+                            CommandParameter="expense"
+                            HeightRequest="32"
+                            Padding="12,0" />
+                </HorizontalStackLayout>
+
+                <!-- Date Range Filter -->
+                <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="8">
+                    <DatePicker Date="{Binding StartDate}"
+                                MinimumDate="{Binding MinDate}"
+                                MaximumDate="{Binding EndDate}"
+                                Format="dd.MM.yyyy" />
+                    <Label Grid.Column="1"
+                           Text="bis"
+                           VerticalOptions="Center"
+                           Style="{StaticResource Caption}" />
+                    <DatePicker Grid.Column="2"
+                                Date="{Binding EndDate}"
+                                MinimumDate="{Binding StartDate}"
+                                MaximumDate="{Binding MaxDate}"
+                                Format="dd.MM.yyyy" />
+                </Grid>
+
+                <!-- Summary -->
+                <HorizontalStackLayout Spacing="16">
+                    <Label Text="{Binding TransactionCount, StringFormat='{0} Transaktionen'}"
+                           Style="{StaticResource Caption}" />
+                    <Label Text="{Binding TotalAmount, StringFormat='Summe: {0:C}'}"
+                           Style="{StaticResource Caption}"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{Binding TotalAmountColor}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Transactions List -->
+        <RefreshView Grid.Row="2"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Transactions}"
+                            SelectionMode="Single"
+                            SelectionChangedCommand="{Binding TransactionSelectedCommand}"
+                            SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
+                            Margin="16">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:HistoryTransactionItem">
+                        <Border Style="{StaticResource TransactionCard}" Margin="0,4">
+                            <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
+                                <BoxView WidthRequest="4"
+                                         CornerRadius="2"
+                                         BackgroundColor="{Binding TypeColor}" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding TypeIcon}"
+                                       FontSize="16"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                                    <Label Text="{Binding Description}"
+                                           Style="{StaticResource CardTitle}" />
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy}'}"
+                                               Style="{StaticResource Caption}" />
+                                        <Label Text="{Binding Category}"
+                                               Style="{StaticResource Caption}"
+                                               TextColor="{StaticResource Primary}"
+                                               IsVisible="{Binding HasCategory}" />
+                                        <Label Text="Zinsen"
+                                               Style="{StaticResource Caption}"
+                                               TextColor="Teal"
+                                               FontFamily="OpenSansSemibold"
+                                               IsVisible="{Binding IsInterestTransaction}" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                                <Label Grid.Column="3"
+                                       Text="{Binding AmountFormatted}"
+                                       TextColor="{Binding TypeColor}"
+                                       FontFamily="OpenSansSemibold"
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="16" Padding="32" VerticalOptions="Center">
+                        <Label Text="Keine Transaktionen"
+                               Style="{StaticResource EmptyStateLabel}"
+                               FontSize="18" />
+                        <Label Text="{Binding EmptyMessage}"
+                               Style="{StaticResource Caption}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator Grid.RowSpan="3"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Child"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Child.ChildTransactionDetailPage"
+             x:DataType="vm:ChildTransactionDetailViewModel"
+             Title="Transaktionsdetails">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding GoBackCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <Grid RowDefinitions="*" Padding="16">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16">
+
+                <!-- Amount Card -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center" Padding="16">
+                        <Label Text="{Binding TypeName}"
+                               Style="{StaticResource Caption}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding AmountFormatted}"
+                               FontSize="42"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{Binding TypeColor}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding DateFormatted}"
+                               Style="{StaticResource Caption}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Description -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Beschreibung"
+                               Style="{StaticResource Caption}" />
+                        <Label Text="{Binding Description}"
+                               FontSize="16"
+                               FontFamily="OpenSansSemibold" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Category -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding HasCategory}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Kategorie"
+                               Style="{StaticResource Caption}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding CategoryIcon}"
+                                   FontSize="20" />
+                            <Label Text="{Binding Category}"
+                                   FontSize="16"
+                                   FontFamily="OpenSansSemibold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Note -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding HasNote}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Notiz"
+                               Style="{StaticResource Caption}" />
+                        <Label Text="{Binding Note}"
+                               FontSize="14" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Interest Info -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsInterestTransaction}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Zins-Gutschrift"
+                               Style="{StaticResource Caption}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="📈"
+                                   FontSize="20" />
+                            <Label Text="{Binding InterestRate, StringFormat='Zinssatz: {0:P2}'}"
+                                   FontSize="14"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Metadata -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Details"
+                               Style="{StaticResource Caption}" />
+
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="16">
+                            <Label Text="Datum:"
+                                   Style="{StaticResource Caption}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding CreatedAt}"
+                                   VerticalOptions="Center" />
+
+                            <Label Grid.Row="1"
+                                   Text="Transaktion-ID:"
+                                   Style="{StaticResource Caption}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text="{Binding TransactionId}"
+                                   FontSize="10"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="CharacterWrap" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>

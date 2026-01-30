@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Auth"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Auth.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Title="Anmelden"
+             Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="24" VerticalOptions="Center">
+
+            <!-- Logo/Header -->
+            <VerticalStackLayout Spacing="8" Margin="0,0,0,24">
+                <Label Text="Taschengeld"
+                       Style="{StaticResource PageTitle}"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{StaticResource Primary}" />
+                <Label Text="Manager"
+                       Style="{StaticResource PageTitle}"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- Error Message -->
+            <Border Style="{StaticResource ErrorBadge}"
+                    IsVisible="{Binding HasError}"
+                    Padding="16,12"
+                    Margin="0,0,0,8">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="{StaticResource White}"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+
+            <!-- Login Form -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Eltern-Anmeldung"
+                           Style="{StaticResource SectionTitle}"
+                           Margin="0" />
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="E-Mail" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="name@beispiel.de"
+                               Keyboard="Email"
+                               Text="{Binding Email}"
+                               ReturnType="Next"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Passwort" Style="{StaticResource Caption}" />
+                        <Entry Placeholder="Passwort eingeben"
+                               IsPassword="True"
+                               Text="{Binding Password}"
+                               ReturnType="Done"
+                               ReturnCommand="{Binding LoginCommand}"
+                               IsEnabled="{Binding IsNotBusy}" />
+                    </VerticalStackLayout>
+
+                    <Button Text="Anmelden"
+                            Command="{Binding LoginCommand}"
+                            Margin="0,8,0,0">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsBusy}" Value="True">
+                                <Setter Property="Text" Value="Wird angemeldet..." />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <Button Text="Passwort vergessen?"
+                            Style="{StaticResource TextButton}"
+                            Command="{Binding ForgotPasswordCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Alternative Actions -->
+            <VerticalStackLayout Spacing="12">
+                <Button Text="Kind-Anmeldung"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding NavigateToChildLoginCommand}"
+                        IsEnabled="{Binding IsNotBusy}" />
+
+                <Button Text="Neues Konto erstellen"
+                        Style="{StaticResource OutlineButton}"
+                        Command="{Binding NavigateToRegisterCommand}"
+                        IsEnabled="{Binding IsNotBusy}" />
+            </VerticalStackLayout>
+
+            <!-- Biometric Login -->
+            <Button Text="Mit Fingerabdruck anmelden"
+                    Style="{StaticResource TextButton}"
+                    Command="{Binding LoginWithBiometricCommand}"
+                    IsVisible="{Binding IsBiometricAvailable}"
+                    IsEnabled="{Binding IsNotBusy}" />
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

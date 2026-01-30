@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaschengeldManager.Mobile.ViewModels.Child"
+             x:Class="TaschengeldManager.Mobile.Views.Pages.Child.ChildAddExpensePage"
+             x:DataType="vm:ChildAddExpenseViewModel"
+             Title="Ausgabe erfassen">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding CancelCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <Grid RowDefinitions="*,Auto" Padding="16">
+        <ScrollView>
+            <VerticalStackLayout Spacing="16">
+
+                <!-- Amount Input -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Betrag"
+                               Style="{StaticResource SectionTitle}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Entry Text="{Binding AmountText}"
+                                   Placeholder="0,00"
+                                   Keyboard="Numeric"
+                                   FontSize="32"
+                                   FontFamily="OpenSansSemibold"
+                                   HorizontalTextAlignment="End" />
+                            <Label Grid.Column="1"
+                                   Text="€"
+                                   FontSize="32"
+                                   FontFamily="OpenSansSemibold"
+                                   VerticalOptions="Center"
+                                   Margin="8,0,0,0" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Description Input -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Beschreibung"
+                               Style="{StaticResource SectionTitle}" />
+                        <Entry Text="{Binding Description}"
+                               Placeholder="Wofür war die Ausgabe?"
+                               MaxLength="100" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Category Selection -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Kategorie"
+                               Style="{StaticResource SectionTitle}" />
+                        <FlexLayout Wrap="Wrap"
+                                    JustifyContent="Start"
+                                    AlignItems="Start"
+                                    BindableLayout.ItemsSource="{Binding Categories}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:ExpenseCategory">
+                                    <Border Padding="12,8"
+                                            Margin="4"
+                                            StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 8">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Stroke" Value="{StaticResource Gray300}" />
+                                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                            </Style>
+                                        </Border.Style>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChildAddExpenseViewModel}}, Path=SelectCategoryCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="{Binding Icon}"
+                                                   FontSize="16" />
+                                            <Label Text="{Binding Name}"
+                                                   FontSize="14"
+                                                   VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+
+                        <!-- Selected Category Display -->
+                        <HorizontalStackLayout Spacing="8"
+                                               IsVisible="{Binding SelectedCategory, Converter={StaticResource IsNotNullConverter}}">
+                            <Label Text="Ausgewählt:"
+                                   Style="{StaticResource Caption}" />
+                            <Label Text="{Binding SelectedCategory.DisplayName}"
+                                   FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource Primary}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Date Picker -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Datum"
+                               Style="{StaticResource SectionTitle}" />
+                        <DatePicker Date="{Binding Date}"
+                                    MaximumDate="{x:Static sys:DateTime.Today}"
+                                    Format="dd.MM.yyyy"
+                                    xmlns:sys="clr-namespace:System;assembly=netstandard" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Action Buttons -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="12" Padding="0,16,0,0">
+            <Button Text="Abbrechen"
+                    Style="{StaticResource OutlineButton}"
+                    Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1"
+                    Text="Speichern"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding CanSave}" />
+        </Grid>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>
